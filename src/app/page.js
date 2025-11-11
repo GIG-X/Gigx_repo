@@ -1,69 +1,58 @@
-"use client";
-import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
+export const metadata = {
+  title: "GiGX — Build fast, scale clean",
+  description: "Ship MVPs quickly with a sleek UI and sensible defaults.",
+};
 
 export default function Home() {
-  const [notes, setNotes] = useState([]);
-  const [content, setContent] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-
-  const loadNotes = async () => {
-    const { data, error } = await supabase
-      .from("notes")
-      .select("*")
-      .order("created_at", { ascending: false });
-    if (error) setError(error.message);
-    else setNotes(data ?? []);
-  };
-
-  useEffect(() => {
-    loadNotes();
-  }, []);
-
-  const addNote = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
-    const { error } = await supabase.from("notes").insert([{ content }]);
-    setLoading(false);
-    if (error) setError(error.message);
-    setContent("");
-    loadNotes();
-  };
-
   return (
-    <main className="min-h-screen mx-auto max-w-xl p-6">
-      <h1 className="text-3xl font-bold mb-4">GiGX + Supabase ✅</h1>
+    <main className="container mx-auto px-4 py-16">
+      <section className="max-w-4xl">
+        <h1 className="text-4xl md:text-6xl font-bold tracking-tight">
+          GiGX
+        </h1>
+        <p className="mt-4 text-lg text-neutral-600">
+          Launch faster. Collaborate safely. Scale without the mess.
+        </p>
 
-      <form onSubmit={addNote} className="flex gap-2 mb-6">
-        <input
-          className="flex-1 border rounded p-2"
-          placeholder="Type a note…"
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          required
+        <div className="mt-8 flex gap-3">
+          <a
+            href="/dashboard"
+            className="inline-flex items-center rounded-xl px-4 py-2 text-white bg-black hover:opacity-90 transition"
+          >
+            Open Dashboard
+          </a>
+          <a
+            href="/map"
+            className="inline-flex items-center rounded-xl px-4 py-2 border border-neutral-300 hover:bg-neutral-50 transition"
+          >
+            Map View
+          </a>
+        </div>
+      </section>
+
+      <section className="mt-16 grid gap-6 md:grid-cols-3">
+        <Feature
+          title="Next.js"
+          desc="App Router, fast builds, file-based routes."
         />
-        <button
-          className="px-4 py-2 rounded bg-black text-white disabled:opacity-50"
-          disabled={loading}
-        >
-          {loading ? "Adding…" : "Add"}
-        </button>
-      </form>
-
-      {error && <p className="text-red-600 mb-4">Error: {error}</p>}
-
-      <ul className="space-y-2">
-        {notes.map((n) => (
-          <li key={n.id} className="border rounded p-3">
-            <div className="text-sm text-gray-500">
-              {new Date(n.created_at).toLocaleString()}
-            </div>
-            <div className="text-lg">{n.content}</div>
-          </li>
-        ))}
-      </ul>
+        <Feature
+          title="Data Ready"
+          desc="React Query + optional Supabase wiring."
+        />
+        <Feature
+          title="Future-Proof UI"
+          desc="Room for a subtle 3D hero later."
+        />
+      </section>
     </main>
+  );
+}
+
+function Feature({ title, desc }) {
+  return (
+    <div className="rounded-2xl border p-5">
+      <h3 className="font-semibold">{title}</h3>
+      <p className="mt-1 text-sm text-neutral-600">{desc}</p>
+    </div>
   );
 }
